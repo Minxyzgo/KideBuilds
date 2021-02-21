@@ -1,0 +1,32 @@
+name: Build Artifacts
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    - name: Create artifacts
+      env:
+        keystore_password: ${{ secrets.KEYSTORE_PASSWORD_SECRET }}
+        keystore_alias_password: ${{ secrets.KEYSTORE_PASSWORD_SECRET }}
+        keystore_alias: frog
+      run: |
+        git clone --depth=1 --branch=master https://github.com/Minxyzgo/KIde
+        cd KIde
+        ./gradlew app:assembleRelease --stacktrace
+    - name: Upload Android artifacts
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: app/build/outputs/apk/debug/app-debug.apk
+        tag: ${{ github.ref }}
