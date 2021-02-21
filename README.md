@@ -1,2 +1,2 @@
-# MindustryBuilds
-Latest builds for Mindustry
+# KideBuilds
+Latest builds for Kide
